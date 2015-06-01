@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Welcome</title>
+    </h:head>
+    <head>
+        <title>Welcome</title>
+        
+        <meta http-equiv="refresh" content="${pageContext.session.maxInactiveInterval};url=index.xhtml" />
+    </head>
+    <h:body>
+       <ui:composition template="/resources/template/template.xhtml">
+           
+           <ui:define name="top">
+               WELCOME
+           </ui:define>
+            <ui:define name="content">
+                    
+                <p:panelGrid columns="7" style="margin:0 auto;">
+                    <p:outputLabel value="Session User Id : " />
+                    <p:outputLabel value="#{sessionBean.userId}" />
+                    
+                    <p:outputLabel value="Session User Name : " />
+                    <p:outputLabel value="#{sessionBean.userName}" />
+                    
+                    <p:outputLabel value="Session Email : " />
+                    <p:outputLabel value="#{sessionBean.email}" />
+
+                    <h:form>
+                        <p:commandButton value="Çıkış Yap" action="#{sessionBean.logout}" />
+                    </h:form>
+                </p:panelGrid>
+                <br/>                
+                <br/>
+                <br/>
+                <br/>
+
+                <h:form style="margin: 0 auto; width: 200px;">
+                    <p:growl id="growl" showDetail="true" sticky="false" life="5000" /> 
+                    <p:panelGrid columns="2" id="saveUserForm">
+                        <p:outputLabel value="Kullanıcı Adı:" />
+                        <p:inputText value="#{usersBean.user.userName}" required="true" requiredMessage="Kullanıcı Adı Alanını Boş Bırakmayınız..." />
+                        <p:outputLabel value="Parola :" />
+                        <p:password value="#{usersBean.user.password}" redisplay="true" required="true" requiredMessage="Parola Alanını Boş Bırakmayınız..." />
+                        <p:outputLabel value="Email :" />
+                        <p:inputText value="#{usersBean.user.email}" required="true" requiredMessage="Email Alanını Boş Bırakmayınız..."/>
+                        <p:commandButton value="Kaydet" actionListener="#{usersBean.addUser}" update=":userTableForm:userTable,growl,saveUserForm" /> 
+                    </p:panelGrid>
+                </h:form>
+                <br/>
+                <br/>
+                <br/>
+                <h:form id="userTableForm">  
+                    <p:growl id="growl1" showDetail="true" sticky="false" life="5000" />
+                    <p:dataTable id="userTable" var="item" value="#{usersBean.userList}" editable="true" style="margin-bottom:20px">
+                        <f:facet name="header">
+                            Kullanıcılar
+                        </f:facet>
+
+                        <p:ajax event="rowEdit" listener="#{usersBean.editUser(item)}"  update=":userTableForm:growl1,userTable"  />
+                        <p:ajax event="rowEditCancel" listener="#{usersBean.onRowCancel}" update=":userTableForm:growl1" />
+
+                        <p:column headerText="Id"  style="width: 50px;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{item.id}" /></f:facet>
+                                <f:facet name="input"><p:inputText id="modelInput" value="#{item.id}" style="width:100%" disabled="true"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Kullanıcı Adı">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{item.userName}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{item.userName}" style="width:100%" rendered="true" requiredMessage="Kullanıcı Adı Alanını Boş Bırakmayınız..."  /></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Parola">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{item.password}" /></f:facet>
+                                <f:facet name="input"><p:password value="#{item.password}" redisplay="true" style="width:100%" rendered="true" requiredMessage="Parola Alanını Boş Bırakmayınız..."  /></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Email">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{item.email}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{item.email}" style="width:100%" rendered="true" requiredMessage="Email Alanını Boş Bırakmayınız..." /></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+
+                        <p:column style="width:32px">
+                            <p:rowEditor />
+                        </p:column>
+
+                        <p:column style="width:32px">
+                            <p:commandButton actionListener="#{usersBean.deleteUser(item)}" icon="ui-icon-trash" update="userTable,:userTableForm:growl1" />
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                
+                
+                
+            </ui:define>
+            
+       </ui:composition>
+    </h:body>
+</html>
+
